@@ -110,7 +110,9 @@ function updateScore() {
     }
 }
 
-function getResult(sex) {
+function getResult(sex, tryCount) {
+    tryCount = tryCount || 0;
+
     var log = [];
     var resultPerson;
     log.push('<br>');
@@ -143,8 +145,15 @@ function getResult(sex) {
     });
 
     if (!resultPerson) {
-        console.log('result is undefined :( getting faked result');
-        resultPerson = persons[persons.length - 2].old;
+        if (tryCount > 1) {
+            console.log('fail :(');
+            return {
+                log: log.join('<br>'),
+                person: 'Валли'
+            };
+        }
+        dependsOnTime = !dependsOnTime;
+        return getResult(sex, ++tryCount);
     }
 
     return {
