@@ -8,14 +8,14 @@ function $$(selector) {
 
 // 20
 // сколько минимально нужно выбрать фильмов
-var MOVIES_MIN_COUNT = 3;
+var MOVIES_MIN_COUNT = 20;
 
 // 15
 // сколько нужно выбрать фильмов, чтобы быть хейтером
-var HATERS_MOVIES_MIN_COUNT = 100;
+var HATERS_MOVIES_MIN_COUNT = 15;
 
 // сколько нужны выбрать фильмов одной эпохи, чтобы она учитывалась
-var DEPENDS_ON_TIME_MIN_COUNT = 2;
+var DEPENDS_ON_TIME_MIN_COUNT = 15;
 
 function shuffle(o){
     for(var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
@@ -70,56 +70,92 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     $('.done').addEventListener('click', function (evt) {
-        var sex = confirm('Ты мужик?') ? 'male' : 'female';
-        //var sex = 'male';
-        var resultPerson;
+        var sex = confirm('Ты мужчина? :-)') ? 'male' : 'female';
+        var result = getResult(sex);
+        $('.demo-content').innerHTML += result.log;
 
-        persons.forEach(function (person) {
-            if (person.dependsOnTime !== dependsOnTime) {
-                return;
-            }
-
-            if (person.sex !== sex) {
-                return;
-            }
-
-            if (person.genre.trim().slice(0,5) !== favoriteGenre.trim().slice(0,5)) {
-                return;
-            }
-
-            if (dependsOnTime) {
-                if (dependsOnOldTime) {
-                    resultPerson = person.old;
-                } else {
-                    resultPerson = person.fresh;
-                }
-            } else {
-                resultPerson = person.fresh;
-            }
-        });
         $('.mdl-card').style.display = 'flex';
-        $('.mdl-card__supporting-text').innerHTML = 'Ты - <b>' + resultPerson + '</b>';
+        $('.mdl-card__supporting-text').innerHTML = 'Ты - <b class="you">' + result.person + '</b>';
         $('.game').remove();
+        $('.demo-content').style.webkitUserSelect = 'initial';
+        $('.demo-content').style.userSelect = 'initial';
+        $('.score').remove();
+        $('.demo-layout').scrollTop = 0;
     }, false);
 
     $('.more').addEventListener('click', function (evt) {
-        var currentChunk = $('.visible.movies-chunk');
-        currentChunk.classList.remove('visible');
+        var chunks = $$('.visible.movies-chunk');
+        var currentChunk = chunks[chunks.length - 1];
+        //currentChunk.classList.remove('visible');
         var nextChunk = currentChunk.nextSibling;
 
         if (nextChunk) {
             nextChunk.classList.add('visible');
-            $('.demo-layout').scrollTop = 0;
+            //$('.demo-layout').scrollTop = 0;
         }
 
         if (!nextChunk.nextSibling) {
             $('.more').remove();
         }
     });
+    updateScore();
 });
 
 var movies = {};
 var ratings = {};
+
+function updateScore() {
+    console.log('updateScore');
+    $('.score').innerText = ratingsCount + ' / ' + MOVIES_MIN_COUNT;
+    if (ratingsCount >= MOVIES_MIN_COUNT) {
+        $('.score').style.color = 'green';
+    } else {
+        $('.score').style.color = 'red';
+    }
+}
+
+function getResult(sex) {
+    console.log('====getResult=======');
+    console.log('favoriteGenre', favoriteGenre);
+    console.log('dependsOnTime', dependsOnTime);
+    console.log('sex', sex);
+    var log = [];
+    var resultPerson;
+    log.push('<br>');
+    persons.forEach(function (person) {
+        if (!isHater && person.dependsOnTime !== dependsOnTime) {
+            log.push('Ты не ' + person.fresh + ', потому что ' + (dependsOnTime ? 'ты зависишь от эпохи, а он нет' : 'он зависит от эпохи, а ты нет'));
+            if (person.old !== person.fresh) {
+                log.push('Ты не ' + person.old + ', потому что ' + (dependsOnTime ? 'ты зависишь от эпохи, а он нет' : 'он зависит от эпохи, а ты нет'));
+            }
+            return;
+        }
+
+        if (person.sex !== sex) {
+            log.push('Ты не ' + person.fresh + ', потому что ' + (sex === 'male' ? 'ты мужчина, а она нет' : 'ты женщина, а он нет'));
+            if (person.old !== person.fresh) {
+                log.push('Ты не ' + person.old + ', потому что ' + (sex === 'male' ? 'ты мужчина, а она нет' : 'ты женщина, а он нет'));
+            }
+            return;
+        }
+
+        if (person.genre.toLowerCase().trim().slice(0,5) !== favoriteGenre.toLowerCase().trim().slice(0,5)) {
+            log.push('Ты не ' + person.fresh + ', потому что твой любимый жанр - ' + favoriteGenre + ', а он - ' + person.genre);
+            if (person.old !== person.fresh) {
+                log.push('Ты не ' + person.old + ', потому что твой любимый жанр - ' + favoriteGenre + ', а он - ' + person.genre);
+            }
+            return;
+        }
+
+        resultPerson = dependsOnOldTime ? person.old : person.fresh;
+    });
+    console.log('====getResult end=======');
+
+    return {
+        person: resultPerson,
+        log: log.join('<br>')
+    };
+}
 
 function getMovieById(id) {
     return movies[id];
@@ -134,6 +170,7 @@ var stats = {};
 var dependsOnTime = false;
 var dependsOnOldTime = false;
 var dependsOnNewTime = false;
+var isHater = false;
 
 function onMovieSelected(id, rating) {
     max = 0;
@@ -157,11 +194,6 @@ function onMovieSelected(id, rating) {
             positiveCount++;
         }
     });
-
-    if (negativeCount >= HATERS_MOVIES_MIN_COUNT) {
-        console.log('hater detected');
-        return;
-    }
 
     var oldMoviesCount = 0;
     var newMoviesCount = 0;
@@ -200,8 +232,12 @@ function onMovieSelected(id, rating) {
         }
     });
 
-    if (!favoriteGenre) {
-        throw new Error('Can not calc favoriteGenre');
+    if (negativeCount >= HATERS_MOVIES_MIN_COUNT) {
+        console.log('hater detected');
+        favoriteGenre = 'Персонаж-хейтер';
+        isHater = true;
+    } else {
+        isHater = false;
     }
 
     var ready = ratingsCount >= MOVIES_MIN_COUNT;
@@ -209,7 +245,7 @@ function onMovieSelected(id, rating) {
     if (ready) {
         $('.done').style.bottom = '20px';
     } else {
-        $('.done').style.bottom = '-40px';
+        $('.done').style.bottom = '-74px';
     }
 
     console.log('stats', stats);
@@ -219,4 +255,8 @@ function onMovieSelected(id, rating) {
     console.log('oldMoviesCount', oldMoviesCount);
     console.log('newMoviesCount', newMoviesCount);
     console.log('ready', ready);
+    console.log('============');
+    console.log('male', getResult('male').person);
+    console.log('female', getResult('female').person);
+    updateScore();
 }

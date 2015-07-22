@@ -74,20 +74,14 @@
     display: block;
 }
 
-.not-done {
-    position: fixed;
-    right: 40px;
-    bottom: 20px;
-    display: none;
-}
-
 .done {
     position: fixed;
     right: 40px;
-    bottom: -40px;
+    bottom: -74px;
     cursor: pointer;
     z-index: 999999999;
     transition: bottom 0.25s;
+    transform: scale(1.6);
 }
 
 * {
@@ -124,4 +118,28 @@
 
 .movies-chunk.visible {
     display: block;
+}
+
+.done-icon {
+    background-image: url(ic_done_48px.svg);
+    width: 40px;
+    transform: scale(0.8);
+    height: 40px;
+    display: inline-block;
+    background-size: contain;
+}
+
+.mdl-slider,
+.mdl-js-slider {
+    cursor: pointer;
+}
+
+.you {
+    user-select: initial;
+    -webkit-user-select: initial;
+}
+
+.score {
+    margin-left: 20px;
+    color: red;
 }
