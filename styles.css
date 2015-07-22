@@ -18,10 +18,15 @@
   padding-left: 40px;
 }
 
+.demo-header {
+    position: fixed;
+}
+
 .demo-container {
-  max-width: 1600px;
-  width: calc(100% - 16px);
-  margin: 0 auto;
+    margin-top: 100px;
+    max-width: 1600px;
+    width: calc(100% - 16px);
+    margin: 0 auto;
 }
 
 .demo-content {
