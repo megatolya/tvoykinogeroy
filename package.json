@@ -1,0 +1,11 @@
+{
+  "name": "tvoi-kinogeroy",
+  "version": "1.0.0",
+  "description": "",
+  "main": "build.js",
+  "author": "Anatoly Ostrovsky",
+  "devDependencies": {
+    "excel": "^0.1.4",
+    "node-xlsx": "^0.6.0"
+  }
+}

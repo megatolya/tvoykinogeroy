@@ -1,40 +1,38 @@
+var xlsx = require('node-xlsx');
 var fs = require('fs');
 
 var PLACEHOLDER = '<!-- MOVIES HERE -->';
 
-function buildHTML() {
-    var html = '';
-    fs.readFile('_template.html', 'utf-8', function (err, template) {
-        getPersons(function (err, persons) {
+var html = '';
+
+fs.readFile('_template.html', 'utf-8', function (err, template) {
+    getPersons(function (err, persons) {
+        if (err) {
+            throw err;
+        }
+
+        getMovies(function (err, movies) {
             if (err) {
                 throw err;
             }
 
-            getMovies(function (err, movies) {
+            movies.forEach(function (movie, index) {
+                movie.id = index;
+                html += buildMovie(movie);
+            });
+
+            html += '<script>var persons = ' + JSON.stringify(persons) + ';</script>';
+            template = template.replace(PLACEHOLDER, html);
+
+            fs.writeFile('index.html', template, function (err) {
                 if (err) {
                     throw err;
                 }
-
-                movies.forEach(function (movie, index) {
-                    movie.id = index;
-                    html += buildMovie(movie);
-                });
-
-                html += '<script>var persons = ' + JSON.stringify(persons) + ';</script>';
-                template = template.replace(PLACEHOLDER, html);
-
-                fs.writeFile('index.html', template, function (err) {
-                    if (err) {
-                        throw err;
-                    }
-                    console.log('done');
-                });
+                console.log('done');
             });
         });
     });
-}
-
-buildHTML();
+});
 
 function buildMovie(movie) {
     return [
@@ -54,26 +52,15 @@ function buildMovie(movie) {
 }
 
 function getTable(cellCount, name, callback) {
-    fs.readFile(name + '.csv', 'utf-8', function (err, data) {
-        if (err) {
-            callback(err);
-            return;
-        }
-
-        var rows = data.split('\n');
-        var res = rows.reduce(function (rows, row) {
-            row = row
-                .replace('"', '&qout')
-                .replace('\'', '&qout');
-            var cells = row.split(',');
-            if (cells.length === cellCount) {
-                rows.push(cells);
-            }
-
-            return rows;
-        }, []);
-        callback(null, res);
-    });
+    var lists = xlsx.parse(__dirname + '/xlsx/' + name + '.xlsx'); 
+    callback(null, lists[0].data.filter(function (row) {
+        row.forEach(function (cell, i) {
+            cell = cell.toString();
+            row[i] = cell.replace('"', '&qout;');
+            row[i] = cell.replace('\'', '&qout;');
+        });
+        return row.length;
+    }));
 }
 
 function getSex(raw) {

@@ -102,7 +102,6 @@ var movies = {};
 var ratings = {};
 
 function updateScore() {
-    console.log('updateScore');
     $('.score').innerText = ratingsCount + ' / ' + MOVIES_MIN_COUNT;
     if (ratingsCount >= MOVIES_MIN_COUNT) {
         $('.score').style.color = 'green';
@@ -112,10 +111,6 @@ function updateScore() {
 }
 
 function getResult(sex) {
-    console.log('====getResult=======');
-    console.log('favoriteGenre', favoriteGenre);
-    console.log('dependsOnTime', dependsOnTime);
-    console.log('sex', sex);
     var log = [];
     var resultPerson;
     log.push('<br>');
@@ -146,7 +141,6 @@ function getResult(sex) {
 
         resultPerson = dependsOnOldTime ? person.old : person.fresh;
     });
-    console.log('====getResult end=======');
 
     if (!resultPerson) {
         console.log('result is undefined :( getting faked result');
@@ -258,7 +252,7 @@ function onMovieSelected(id, rating) {
     console.log('newMoviesCount', newMoviesCount);
     console.log('ready', ready);
     console.log('============');
-    console.log('male', getResult('male').person);
-    console.log('female', getResult('female').person);
+    console.log('>>>>>>>>> male', getResult('male').person);
+    console.log('>>>>>>>>> female', getResult('female').person);
     updateScore();
 }
