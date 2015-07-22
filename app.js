@@ -6,16 +6,14 @@ function $$(selector) {
     return [].slice.call(document.querySelectorAll(selector));
 }
 
-// 20
 // сколько минимально нужно выбрать фильмов
-var MOVIES_MIN_COUNT = 20;
+var MOVIES_MIN_COUNT = 10;
 
-// 15
 // сколько нужно выбрать фильмов, чтобы быть хейтером
-var HATERS_MOVIES_MIN_COUNT = 15;
+var HATERS_MOVIES_MIN_COUNT = 7;
 
 // сколько нужны выбрать фильмов одной эпохи, чтобы она учитывалась
-var DEPENDS_ON_TIME_MIN_COUNT = 15;
+var DEPENDS_ON_TIME_MIN_COUNT = 6;
 
 function shuffle(o){
     for(var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
@@ -23,7 +21,6 @@ function shuffle(o){
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-
     var moviesArr = [].slice.call($$('.movie'));
     shuffle(moviesArr);
 
@@ -150,6 +147,11 @@ function getResult(sex) {
         resultPerson = dependsOnOldTime ? person.old : person.fresh;
     });
     console.log('====getResult end=======');
+
+    if (!resultPerson) {
+        console.log('result is undefined :( getting faked result');
+        resultPerson = persons[persons.length - 2].old;
+    }
 
     return {
         person: resultPerson,
