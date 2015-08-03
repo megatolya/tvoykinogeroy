@@ -20,6 +20,18 @@ function shuffle(o){
     return o;
 }
 
+function getSex(callback) {
+    window.sexyCallback = function (sex) {
+        sexyContainer.style.display = 'none';
+        sexyContainerOverlay.style.display = 'none';
+        callback(sex);
+    };
+    var sexyContainer = $('.sexy-container');
+    var sexyContainerOverlay = $('.sexy-container-overlay');
+    sexyContainer.style.display = 'block';
+    sexyContainerOverlay.style.display = 'block';
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     var moviesArr = [].slice.call($$('.movie'));
     shuffle(moviesArr);
@@ -67,17 +79,18 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     $('.done').addEventListener('click', function (evt) {
-        var sex = confirm('Ты мужчина? :-)') ? 'male' : 'female';
-        var result = getResult(sex);
-        $('.demo-content').innerHTML += result.log;
+        getSex(function (sex) {
+            var result = getResult(sex);
+            //$('.demo-content').innerHTML += result.log;
 
-        $('.mdl-card').style.display = 'flex';
-        $('.mdl-card__supporting-text').innerHTML = 'Ты - <b class="you">' + result.person + '</b>';
-        $('.game').remove();
-        $('.demo-content').style.webkitUserSelect = 'initial';
-        $('.demo-content').style.userSelect = 'initial';
-        $('.score').remove();
-        $('.demo-layout').scrollTop = 0;
+            $('.mdl-card').style.display = 'flex';
+            $('.mdl-card__supporting-text').innerHTML = 'Ты - <b class="you">' + result.person + '</b>';
+            $('.game').remove();
+            $('.demo-content').style.webkitUserSelect = 'initial';
+            $('.demo-content').style.userSelect = 'initial';
+            $('.score').remove();
+            $('.demo-layout').scrollTop = 0;
+        });
     }, false);
 
     $('.more').addEventListener('click', function (evt) {

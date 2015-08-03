@@ -11,6 +11,8 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="material.min.css">
     <link rel="stylesheet" href="styles.css">
+    <script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
+    <script type="text/javascript">stLight.options({publisher: "75df1e24-bb58-4a8d-a68f-f0159a10f393", doNotHash: false, doNotCopy: false, hashAddressBar: false});</script>
   </head>
   <body>
     <div class="demo-layout mdl-layout mdl-layout--fixed-header mdl-js-layout mdl-color--grey-100">
@@ -36,9 +38,13 @@
             <div class="mdl-card__supporting-text">
             </div>
             <div class="mdl-card__actions mdl-card--border">
-                <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
-                    Поделиться
-                </a>
+                <!--<a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">-->
+                    <!--Поделиться-->
+                <!--</a>-->
+                <span class='st_vkontakte_vcount' displayText='Vkontakte'></span>
+                <span class='st_facebook_vcount' displayText='Facebook'></span>
+                <span class='st_twitter_vcount' displayText='Tweet'></span>
+                <span class='st_pinterest_vcount' displayText='Pinterest'></span>
             </div>
             <div class="mdl-card__menu">
                 <button class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect">
@@ -64,5 +70,16 @@
     <button class="done mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--colored">
         <i class="done-icon"></i>
     </button>
+    <div class="sexy-container-overlay"></div>
+    <div class="sexy-container">
+        <h1>Выбери пол</h1>
+        <p>Остался последний шаг - выбери свой пол и мы вычислим, какой персонаж больше всего похож на тебя.</p>
+        <button class="mdl-button mdl-js-button mdl-button--primary" onclick="sexyCallback('male')">
+            Мужской
+        </button>
+        <button class="mdl-button mdl-js-button mdl-button--accent" onclick="sexyCallback('female')">
+            Женский
+        </button>
+    </div>
   </body>
 </html>
