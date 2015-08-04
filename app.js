@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', function () {
             var result = getResult(sex);
             //$('.demo-content').innerHTML += result.log;
 
-            $('.mdl-card').style.display = 'flex';
+            $('.mdl-card').style.display = 'block';
             $('.mdl-card__supporting-text').innerHTML = 'Ты - <b class="you">' + result.person + '</b>';
             $('.game').remove();
             $('.demo-content').style.webkitUserSelect = 'initial';
