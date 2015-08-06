@@ -115,7 +115,7 @@ var movies = {};
 var ratings = {};
 
 function updateScore() {
-    $('.score').innerText = ratingsCount + ' / ' + MOVIES_MIN_COUNT;
+    $('.score').innerHTML = ratingsCount + ' / ' + MOVIES_MIN_COUNT;
     if (ratingsCount >= MOVIES_MIN_COUNT) {
         $('.score').style.color = 'green';
     } else {
